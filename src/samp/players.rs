@@ -1,5 +1,5 @@
 use super::version::{version, Version};
-use super::{v037 as r1, v037r3 as r3};
+use super::{v037 as r1, v037r3 as r3, v03dl as dl};
 use crate::gta::matrix::{CVector, RwMatrix};
 
 #[repr(C, packed)]
@@ -11,6 +11,7 @@ pub struct GamePed {
 pub struct LocalPlayer<'a> {
     player_v1: Option<&'a mut r1::CLocalPlayer>,
     player_v3: Option<&'a mut r3::CLocalPlayer>,
+    player_dl: Option<&'a mut dl::CLocalPlayer>,
 }
 
 impl<'a> LocalPlayer<'a> {
@@ -23,6 +24,10 @@ impl<'a> LocalPlayer<'a> {
             return player.matrix();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.matrix();
+        }        
+
         None
     }
 
@@ -35,6 +40,9 @@ impl<'a> LocalPlayer<'a> {
             return player.ped_position();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.ped_position();
+        }
         CVector::zero()
     }
 
@@ -47,6 +55,9 @@ impl<'a> LocalPlayer<'a> {
             return player.velocity();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.velocity();
+        }
         CVector::zero()
     }
 
@@ -59,6 +70,9 @@ impl<'a> LocalPlayer<'a> {
             return player.name();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.name();
+        }
         None
     }
 
@@ -71,6 +85,9 @@ impl<'a> LocalPlayer<'a> {
             return player.id();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.id();
+        }
         None
     }
 
@@ -83,6 +100,10 @@ impl<'a> LocalPlayer<'a> {
             return unsafe { (*player.m_pPed).m_pGamePed as *mut _ };
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return unsafe { (*player.m_pPed).m_pGamePed as *mut _ };
+        }        
+
         std::ptr::null()
     }
 }
@@ -90,11 +111,13 @@ impl<'a> LocalPlayer<'a> {
 pub struct PlayerPool<'a> {
     pool_v1: Option<&'a mut r1::CPlayerPool>,
     pool_v3: Option<&'a mut r3::CPlayerPool>,
+    pool_dl: Option<&'a mut dl::CPlayerPool>,
 }
 
 pub struct Player<'a> {
     player_v1: Option<&'a r1::CPlayerInfo>,
     player_v3: Option<&'a r3::CPlayerInfo>,
+    player_dl: Option<&'a dl::CPlayerInfo>,
 }
 
 impl<'a> Player<'a> {
@@ -102,6 +125,7 @@ impl<'a> Player<'a> {
         Player {
             player_v1: Some(player),
             player_v3: None,
+            player_dl: None,
         }
     }
 
@@ -109,8 +133,17 @@ impl<'a> Player<'a> {
         Player {
             player_v3: Some(player),
             player_v1: None,
+            player_dl: None,
         }
     }
+
+    fn new_v3(player: &'a dl::CPlayerInfo) -> Player<'a> {
+        Player {
+            player_v3: None,
+            player_v1: None,
+            player_dl: Some(player),
+        }
+    }    
 
     pub fn remote_player(&self) -> Option<RemotePlayer> {
         Some(RemotePlayer {
@@ -122,6 +155,10 @@ impl<'a> Player<'a> {
                 .player_v3
                 .as_ref()
                 .and_then(|player| player.remote_player()),
+            remote_dl: self
+            .player_dl
+            .as_ref()
+            .and_then(|player| player.remote_player()),                
         })
     }
 
@@ -134,6 +171,9 @@ impl<'a> Player<'a> {
             return player.gta_ped();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.gta_ped();
+        }
         None
     }
 
@@ -146,6 +186,9 @@ impl<'a> Player<'a> {
             return player.is_in_stream();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.is_in_stream();
+        }
         false
     }
 
@@ -158,6 +201,9 @@ impl<'a> Player<'a> {
             return player.hash();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.hash();
+        }
         u64::max_value()
     }
 
@@ -170,6 +216,9 @@ impl<'a> Player<'a> {
             return player.name();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.name();
+        }
         None
     }
 
@@ -182,6 +231,9 @@ impl<'a> Player<'a> {
             return player.name_with_id();
         }
 
+        if let Some(player) = self.player_dl.as_ref() {
+            return player.name_with_id();
+        }
         "[ID: -1] noname".to_string()
     }
 }
@@ -189,6 +241,7 @@ impl<'a> Player<'a> {
 pub struct RemotePlayer<'a> {
     remote_v1: Option<&'a r1::CRemotePlayer>,
     remote_v3: Option<&'a r3::CRemotePlayer>,
+    remote_dl: Option<&'a dl::CRemotePlayer>,
 }
 
 impl<'a> RemotePlayer<'a> {
@@ -201,6 +254,9 @@ impl<'a> RemotePlayer<'a> {
             return remote.matrix();
         }
 
+        if let Some(remote) = self.remote_dl.as_ref() {
+            return remote.matrix();
+        }
         None
     }
 
@@ -213,6 +269,9 @@ impl<'a> RemotePlayer<'a> {
             return remote.ped_position();
         }
 
+        if let Some(remote) = self.remote_dl.as_ref() {
+            return remote.ped_position();
+        }
         CVector::zero()
     }
 
@@ -225,6 +284,9 @@ impl<'a> RemotePlayer<'a> {
             return remote.velocity();
         }
 
+        if let Some(remote) = self.remote_dl.as_ref() {
+            return remote.velocity();
+        }
         CVector::zero()
     }
 
@@ -237,6 +299,9 @@ impl<'a> RemotePlayer<'a> {
             return remote.head_direction();
         }
 
+        if let Some(remote) = self.remote_dl.as_ref() {
+            return remote.head_direction();
+        }
         CVector::zero()
     }
 
@@ -249,6 +314,9 @@ impl<'a> RemotePlayer<'a> {
             return remote.id();
         }
 
+        if let Some(remote) = self.remote_dl.as_ref() {
+            return remote.id();
+        }
         u16::max_value()
     }
 }
@@ -258,11 +326,18 @@ pub fn local_player<'a>() -> Option<LocalPlayer<'a>> {
         Version::V037 => Some(LocalPlayer {
             player_v1: r1::local_player(),
             player_v3: None,
+            player_dl: None,
         }),
         Version::V037R3 => Some(LocalPlayer {
             player_v1: None,
             player_v3: r3::local_player(),
+            player_dl: None,
         }),
+        Version::V03DL => Some(LocalPlayer {
+            player_v1: None,
+            player_v3: None,
+            player_dl: dl::local_player(),
+        }),        
         _ => None,
     }
 }
@@ -272,11 +347,18 @@ pub fn find_player<'a>(id: i32) -> Option<Player<'a>> {
         Version::V037 => Some(Player {
             player_v1: r1::find_player(id),
             player_v3: None,
+            player_dl: None,
         }),
         Version::V037R3 => Some(Player {
             player_v1: None,
             player_v3: r3::find_player(id),
+            player_dl: None,
         }),
+        Version::V03DL => Some(Player {
+            player_v1: None,
+            player_v3: None,
+            player_dl: dl::find_player(id),
+        }),        
         _ => None,
     }
 }
@@ -295,6 +377,12 @@ pub fn players<'a>() -> Option<PlayersIterator<'a>> {
             index: 0,
         }),
 
+        Version::V03DL => Some(PlayersIterator {
+            players_v3: None,
+            players_v1: None,
+            players_dl: dl::player_pool().map(|pool| pool.m_pObject.as_mut()),
+            index: 0,
+        }),
         _ => None,
     }
 }
@@ -302,6 +390,7 @@ pub fn players<'a>() -> Option<PlayersIterator<'a>> {
 pub struct PlayersIterator<'a> {
     players_v1: Option<&'a mut [*mut r1::CPlayerInfo]>,
     players_v3: Option<&'a mut [*mut r3::CPlayerInfo]>,
+    players_dl: Option<&'a mut [*mut r3::CPlayerInfo]>,
     index: usize,
 }
 
@@ -331,6 +420,16 @@ impl<'a> Iterator for PlayersIterator<'a> {
             }
         }
 
+        if let Some(players) = self.players_dl.as_ref() {
+            while self.index >= 0 && self.index < 1000 {
+                if let Some(player) = players.get(self.index).filter(|player| !player.is_null()) {
+                    self.index += 1;
+                    return Some(Player::new_dl(unsafe { &mut **player }));
+                }
+
+                self.index += 1;
+            }
+        }
         None
     }
 }
