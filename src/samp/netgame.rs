@@ -16,11 +16,13 @@ impl<'a> NetGame<'a> {
     pub fn get() -> NetGame<'a> {
         match version() {
             Version::V037 => NetGame {
+                netgame_dl: None,
                 netgame_v1: v037::CNetGame::get(),
                 netgame_v3: None,
             },
 
             Version::V037R3 => NetGame {
+                netgame_dl: None,
                 netgame_v1: None,
                 netgame_v3: v037r3::CNetGame::get(),
             },

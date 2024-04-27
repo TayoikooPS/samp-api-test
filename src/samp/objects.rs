@@ -15,6 +15,7 @@ impl<'a> Object<'a> {
         Object {
             object_v1: Some(object),
             object_v3: None,
+            object_dl: None,
         }
     }
 
@@ -22,6 +23,7 @@ impl<'a> Object<'a> {
         Object {
             object_v3: Some(object),
             object_v1: None,
+            object_dl: None,
         }
     }
 
