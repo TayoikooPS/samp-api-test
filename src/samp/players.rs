@@ -368,12 +368,14 @@ pub fn players<'a>() -> Option<PlayersIterator<'a>> {
         Version::V037 => Some(PlayersIterator {
             players_v1: r1::player_pool().map(|pool| pool.m_pObject.as_mut()),
             players_v3: None,
+            players_dl: None,
             index: 0,
         }),
 
         Version::V037R3 => Some(PlayersIterator {
             players_v3: r3::player_pool().map(|pool| pool.m_pObject.as_mut()),
             players_v1: None,
+            players_dl: None,
             index: 0,
         }),
 
@@ -390,7 +392,7 @@ pub fn players<'a>() -> Option<PlayersIterator<'a>> {
 pub struct PlayersIterator<'a> {
     players_v1: Option<&'a mut [*mut r1::CPlayerInfo]>,
     players_v3: Option<&'a mut [*mut r3::CPlayerInfo]>,
-    players_dl: Option<&'a mut [*mut r3::CPlayerInfo]>,
+    players_dl: Option<&'a mut [*mut dl::CPlayerInfo]>,
     index: usize,
 }
 
