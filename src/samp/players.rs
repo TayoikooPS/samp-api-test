@@ -137,7 +137,7 @@ impl<'a> Player<'a> {
         }
     }
 
-    fn new_v3(player: &'a dl::CPlayerInfo) -> Player<'a> {
+    fn new_dl(player: &'a dl::CPlayerInfo) -> Player<'a> {
         Player {
             player_v3: None,
             player_v1: None,
