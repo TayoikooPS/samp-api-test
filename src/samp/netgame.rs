@@ -48,7 +48,7 @@ impl<'a> NetGame<'a> {
         let address = match version() {
             Version::V037 => 0x9380,
             Version::V037R3 => 0x9510,
-            Version:V03DL => 0x9570,
+            Version::V03DL => 0x9570,
             _ => return,
         };
 

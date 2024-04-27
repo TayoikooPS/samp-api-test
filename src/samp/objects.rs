@@ -25,7 +25,7 @@ impl<'a> Object<'a> {
         }
     }
 
-    fn new_dl(object: &'a r3::CObject) -> Object<'a> {
+    fn new_dl(object: &'a dl::CObject) -> Object<'a> {
         Object {
             object_dl: Some(object),
             object_v3: None,
