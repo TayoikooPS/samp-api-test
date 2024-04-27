@@ -67,7 +67,7 @@ impl<'a> Object<'a> {
         match version() {
             Version::V037 => r1::find_object(object_id).map(|obj| Object::new_v1(obj)),
             Version::V037R3 => r3::find_object(object_id).map(|obj| Object::new_v3(obj)),
-            Version::V03DL => r3::find_object(object_id).map(|obj| Object::new_dl(obj)),
+            Version::V03DL => dl::find_object(object_id).map(|obj| Object::new_dl(obj)),
             _ => None,
         }
     }
