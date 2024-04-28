@@ -833,7 +833,7 @@ pub fn find_object<'a>(object_id: i32) -> Option<&'a mut CObject> {
         let object_id = object_id as usize;
 
         if let Some(objects) = object_pool() {
-            println("Object Loaded: (?)",object_id);
+            println!("Object Loaded: (?)",object_id);
             if objects.m_pObject[object_id].is_null() {
                 return None;
             }
