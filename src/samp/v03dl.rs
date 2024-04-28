@@ -825,7 +825,7 @@ pub fn object_pool() -> Option<&'static mut CObjectPool> {
 }
 
 pub fn find_object<'a>(object_id: i32) -> Option<&'a mut CObject> {
-    if object_id < 0 || object_id > 1000 {
+    if object_id < 0 || object_id > 60000 {
         return None;
     }
 
